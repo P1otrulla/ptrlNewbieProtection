@@ -1,4 +1,6 @@
 package dev.piotrulla.newbieprotection.configuration.implementation;
 
-public class CommandConfiguration {
+import eu.okaeri.configs.OkaeriConfig;
+
+public class CommandConfiguration extends OkaeriConfig {
 }

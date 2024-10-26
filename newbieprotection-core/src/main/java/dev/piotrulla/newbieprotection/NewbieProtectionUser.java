@@ -4,14 +4,14 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
 
-public class NewbieUser implements Newbie {
+public class NewbieProtectionUser implements Newbie {
 
     private final UUID uniqueId;
 
     private Instant issuedAt;
     private Duration protectionTime;
 
-    public NewbieUser(UUID uniqueId) {
+    public NewbieProtectionUser(UUID uniqueId) {
         this.uniqueId = uniqueId;
     }
 

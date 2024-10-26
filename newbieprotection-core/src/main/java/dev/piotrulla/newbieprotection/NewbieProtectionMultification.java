@@ -12,13 +12,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class NewbieMultification extends BukkitMultification<MessagesConfiguration> {
+public class NewbieProtectionMultification extends BukkitMultification<MessagesConfiguration> {
 
     private final AudienceProvider audienceProvider;
     private final MessagesConfiguration messagesCfg;
     private final MiniMessage miniMessage;
 
-    public NewbieMultification(AudienceProvider audienceProvider, MessagesConfiguration messagesCfg, MiniMessage miniMessage) {
+    public NewbieProtectionMultification(AudienceProvider audienceProvider, MessagesConfiguration messagesCfg, MiniMessage miniMessage) {
         this.audienceProvider = audienceProvider;
         this.messagesCfg = messagesCfg;
         this.miniMessage = miniMessage;

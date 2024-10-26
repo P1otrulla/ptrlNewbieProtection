@@ -1,4 +1,7 @@
 package dev.piotrulla.newbieprotection;
 
-public class NewbieProtectionAPI {
+public interface NewbieProtectionAPI {
+
+    NewbieProtectionService getNewbieProtectionService();
+
 }

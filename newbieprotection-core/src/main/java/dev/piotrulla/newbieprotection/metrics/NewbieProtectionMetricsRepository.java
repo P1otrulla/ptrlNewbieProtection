@@ -4,7 +4,7 @@ import eu.okaeri.configs.OkaeriConfig;
 
 import java.time.Duration;
 
-public class MetricsRepository extends OkaeriConfig implements MetricsService {
+public class NewbieProtectionMetricsRepository extends OkaeriConfig implements NewbieProtectionMetrics {
 
     public int protectedPlayers = 0;
     public Duration timeOnProtection = Duration.ZERO;

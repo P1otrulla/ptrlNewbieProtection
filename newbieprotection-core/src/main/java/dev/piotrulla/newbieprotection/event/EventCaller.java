@@ -1,4 +1,4 @@
-package dev.piotrulla.newbieprotection;
+package dev.piotrulla.newbieprotection.event;
 
 import org.bukkit.Server;
 import org.bukkit.event.Event;

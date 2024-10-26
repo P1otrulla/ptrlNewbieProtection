@@ -47,12 +47,8 @@ dependencies {
     implementation("com.eternalcode:multification-okaeri:1.1.4-SNAPSHOT")
     implementation("com.eternalcode:multification-bukkit:1.1.4-SNAPSHOT")
 
-    // caffeine cache
-    implementation("com.github.ben-manes.caffeine:caffeine:3.0.0")
-
     // bStats system
     implementation("org.bstats:bstats-bukkit:3.0.0")
-
 
     // placeholders
     compileOnly("me.clip:placeholderapi:2.11.6")
@@ -98,5 +94,16 @@ tasks.withType<ShadowJar> {
         "javax/**",
     )
 
-    relocate("org.bstats", "dev.piotrulla.newbieprotection.bstats")
+    val prefix = "dev.piotrulla.newbieprotection.shared"
+
+    listOf(
+        "dev.rollczi",
+        "eu.okaeri",
+        "com.eternalcode",
+        "net.kyori",
+        "org.bstats",
+        "org.yaml"
+    ).forEach { pack ->
+        relocate(pack, "$prefix.$pack")
+    }
 }
