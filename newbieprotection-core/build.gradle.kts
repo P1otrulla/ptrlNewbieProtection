@@ -17,6 +17,7 @@ repositories {
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://storehouse.okaeri.eu/repository/maven-public/")
     maven("https://repo.stellardrift.ca/repository/snapshots/")
+    maven("https://repo.codemc.io/repository/maven-releases/")
     maven("https://repo.eternalcode.pl/snapshots")
     maven("https://repo.eternalcode.pl/releases")
 }
@@ -46,6 +47,9 @@ dependencies {
     implementation("com.eternalcode:eternalcode-commons-adventure:1.1.4-SNAPSHOT")
     implementation("com.eternalcode:multification-okaeri:1.1.4-SNAPSHOT")
     implementation("com.eternalcode:multification-bukkit:1.1.4-SNAPSHOT")
+
+    // packetevents
+    compileOnly("com.github.retrooper:packetevents-spigot:2.5.0")
 
     // bStats system
     implementation("org.bstats:bstats-bukkit:3.0.0")

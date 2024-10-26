@@ -4,6 +4,7 @@ import com.eternalcode.commons.adventure.AdventureLegacyColorPostProcessor;
 import com.eternalcode.commons.adventure.AdventureLegacyColorPreProcessor;
 import com.eternalcode.commons.adventure.AdventureUrlPostProcessor;
 import com.eternalcode.multification.shared.Formatter;
+import dev.piotrulla.newbieprotection.bridge.BridgeService;
 import dev.piotrulla.newbieprotection.configuration.ConfigService;
 import dev.piotrulla.newbieprotection.configuration.implementation.MessagesConfiguration;
 import dev.piotrulla.newbieprotection.configuration.implementation.NewbieConfiguration;
@@ -28,11 +29,22 @@ import java.io.File;
 
 public class NewbieProtectionPlugin extends JavaPlugin {
 
+    private BridgeService bridgeService;
+
     private AudienceProvider audienceProvider;
     private LiteCommands<CommandSender> liteCommands;
 
     @Override
+    public void onLoad() {
+        this.bridgeService = new BridgeService(this.getDescription(), this.getServer().getPluginManager());
+        this.bridgeService.initialize();
+
+        this.bridgeService.getPacketEventsProvider().load(this);
+    }
+
+    @Override
     public void onEnable() {
+        this.bridgeService.getPacketEventsProvider().enable();
         ConfigService configService = new ConfigService();
 
         NewbieConfiguration configuration = configService.create(NewbieConfiguration.class, new File(this.getDataFolder(), "config.yml"));
@@ -113,6 +125,7 @@ public class NewbieProtectionPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        this.bridgeService.getPacketEventsProvider().disable();
         this.audienceProvider.close();
         this.liteCommands.unregister();
     }
