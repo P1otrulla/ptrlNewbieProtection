@@ -21,9 +21,16 @@ For integration, use the following dependency in your project:
 
 **Repository**: [repo.piotrulla.dev/releases](https://repo.piotrulla.dev/releases)
 
+Maven
 ```xml
 <dependency>
     <groupId>dev.piotrulla.newbieprotection</groupId>
     <artifactId>newbieprotection-api</artifactId>
     <version>1.0.0</version>
 </dependency>
+```
+
+Gradle
+```xml
+compileOnly("dev.piotrulla.newbieprotection:newbieprotection-api:1.0.0")
+
