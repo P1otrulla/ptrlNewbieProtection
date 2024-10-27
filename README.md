@@ -1,3 +1,4 @@
+![ptrlNewbieProtection](https://github.com/user-attachments/assets/58f71aab-ecce-449c-9b76-949eacaf7ffc)
 # 🛡️ ptrlNewbieProtection - New Player Protection for Minecraft Servers
 
 **ptlNewbieProtection** is a lightweight plugin providing temporary protection for new players on Minecraft servers. It operates entirely in-memory, relying on server data without needing an external database.
