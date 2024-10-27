@@ -11,12 +11,14 @@ public class NewbieProtectionTask implements Runnable {
     private final NewbieProtectionService newbieProtectionService;
     private final NewbieProtectionMultification multification;
     private final NewbieProtectionMetrics metrics;
+    private final NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl;
     private final Server server;
 
-    public NewbieProtectionTask(NewbieProtectionService newbieProtectionService, NewbieProtectionMultification multification, NewbieProtectionMetrics metrics, Server server) {
+    public NewbieProtectionTask(NewbieProtectionService newbieProtectionService, NewbieProtectionMultification multification, NewbieProtectionMetrics metrics, NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl, Server server) {
         this.newbieProtectionService = newbieProtectionService;
         this.multification = multification;
         this.metrics = metrics;
+        this.newbieProtectionNameTagServiceImpl = newbieProtectionNameTagServiceImpl;
         this.server = server;
     }
 
@@ -35,6 +37,8 @@ public class NewbieProtectionTask implements Runnable {
 
             if (protectionEnd.isBefore(now)) {
                 this.newbieProtectionService.endProtection(player);
+                this.newbieProtectionNameTagServiceImpl.removeNameTag(player);
+
                 this.multification.player(player.getUniqueId(), cfg -> cfg.protectionEnd);
 
                 this.metrics.addTimeOnProtection(newbie.protectionTime());

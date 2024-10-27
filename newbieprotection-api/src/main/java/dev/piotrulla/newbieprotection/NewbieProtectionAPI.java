@@ -4,4 +4,6 @@ public interface NewbieProtectionAPI {
 
     NewbieProtectionService getNewbieProtectionService();
 
+    NewbieProtectionNameTagService getNewbieProtectionNameTagService();
+
 }

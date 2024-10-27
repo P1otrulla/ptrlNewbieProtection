@@ -21,16 +21,19 @@ public class NewbieProtectionAdminCommand {
     private final NewbieProtectionService newbieProtectionService;
     private final NewbieProtectionMultification multification;
     private final NewbieProtectionMetrics metrics;
+    private final NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl;
 
-    public NewbieProtectionAdminCommand(NewbieProtectionService newbieProtectionService, NewbieProtectionMultification multification, NewbieProtectionMetrics metrics) {
+    public NewbieProtectionAdminCommand(NewbieProtectionService newbieProtectionService, NewbieProtectionMultification multification, NewbieProtectionMetrics metrics, NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl) {
         this.newbieProtectionService = newbieProtectionService;
         this.multification = multification;
         this.metrics = metrics;
+        this.newbieProtectionNameTagServiceImpl = newbieProtectionNameTagServiceImpl;
     }
 
     @Execute(name = "add")
     void add(@Context CommandSender commandSender, @Arg("target") Player target, @Arg("time") Duration time) {
         this.newbieProtectionService.startProtection(target, time);
+        this.newbieProtectionNameTagServiceImpl.applyNameTag(target);
 
         Formatter formatter = new Formatter()
                 .register("{PLAYER}", target.getName())
@@ -51,6 +54,7 @@ public class NewbieProtectionAdminCommand {
         });
 
         this.newbieProtectionService.endProtection(target);
+        this.newbieProtectionNameTagServiceImpl.removeNameTag(target);
 
         Formatter formatter = new Formatter()
                 .register("{PLAYER}", target.getName());
