@@ -10,6 +10,7 @@ import dev.piotrulla.newbieprotection.configuration.implementation.MessagesConfi
 import dev.piotrulla.newbieprotection.configuration.implementation.NewbieConfiguration;
 import dev.piotrulla.newbieprotection.event.EventCaller;
 import dev.piotrulla.newbieprotection.metrics.NewbieProtectionMetricsRepository;
+import dev.piotrulla.newbieprotection.nametag.NameTagService;
 import dev.piotrulla.newbieprotection.util.DurationUtil;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.adventure.LiteAdventureExtension;
@@ -18,6 +19,9 @@ import dev.rollczi.litecommands.schematic.Schematic;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.megavex.scoreboardlibrary.api.ScoreboardLibrary;
+import net.megavex.scoreboardlibrary.api.exception.NoPacketAdapterAvailableException;
+import net.megavex.scoreboardlibrary.api.noop.NoopScoreboardLibrary;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bstats.charts.SingleLineChart;
@@ -32,19 +36,17 @@ public class NewbieProtectionPlugin extends JavaPlugin {
     private BridgeService bridgeService;
 
     private AudienceProvider audienceProvider;
+    private ScoreboardLibrary scoreboardLibrary;
     private LiteCommands<CommandSender> liteCommands;
 
     @Override
     public void onLoad() {
         this.bridgeService = new BridgeService(this.getDescription(), this.getServer().getPluginManager());
         this.bridgeService.initialize();
-
-        this.bridgeService.getPacketEventsProvider().load(this);
     }
 
     @Override
     public void onEnable() {
-        this.bridgeService.getPacketEventsProvider().enable();
         ConfigService configService = new ConfigService();
 
         NewbieConfiguration configuration = configService.create(NewbieConfiguration.class, new File(this.getDataFolder(), "config.yml"));
@@ -67,9 +69,19 @@ public class NewbieProtectionPlugin extends JavaPlugin {
         NewbieProtectionService newbieProtectionService = new NewbieProtectionServiceImpl(eventCaller);
         NewbieProtectionAPIProvider.initialize(new NewbieProtectionAPIImpl(newbieProtectionService));
 
-        server.getPluginManager().registerEvents(new NewbieProtectionController(multification, newbieProtectionService, configuration, metricsRepository), this);
+        try {
+            this.scoreboardLibrary = ScoreboardLibrary.loadScoreboardLibrary(this);
+        }
+        catch (NoPacketAdapterAvailableException e) {
+            this.scoreboardLibrary = new NoopScoreboardLibrary();
+            this.getLogger().warning("No scoreboard packet adapter available!");
+        }
 
-        server.getScheduler().runTaskTimer(this, new NewbieProtectionTask(newbieProtectionService, multification, metricsRepository, server), 20L, 20L);
+        NameTagService nameTagService = new NameTagService(configuration.nameTag, this.scoreboardLibrary, miniMessage);
+
+        server.getPluginManager().registerEvents(new NewbieProtectionController(multification, newbieProtectionService, configuration, metricsRepository, nameTagService), this);
+
+        server.getScheduler().runTaskTimer(this, new NewbieProtectionTask(newbieProtectionService, multification, metricsRepository, nameTagService, server), 20L, 20L);
 
         if (configuration.reminderProtection) {
             long reminderTime = configuration.reminderInterval.toMillis() / 50;
@@ -116,8 +128,8 @@ public class NewbieProtectionPlugin extends JavaPlugin {
                     });
                 })
                 .commands(
-                        new NewbieProtectionAdminCommand(newbieProtectionService, multification, metricsRepository),
-                        new NewbieProtectionCommand(newbieProtectionService, multification, metricsRepository)
+                        new NewbieProtectionAdminCommand(newbieProtectionService, multification, metricsRepository, nameTagService),
+                        new NewbieProtectionCommand(newbieProtectionService, multification, metricsRepository, nameTagService)
                 )
                 .build();
 
@@ -125,7 +137,7 @@ public class NewbieProtectionPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        this.bridgeService.getPacketEventsProvider().disable();
+        this.scoreboardLibrary.close();
         this.audienceProvider.close();
         this.liteCommands.unregister();
     }

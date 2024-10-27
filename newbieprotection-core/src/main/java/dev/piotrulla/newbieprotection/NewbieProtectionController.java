@@ -3,6 +3,7 @@ package dev.piotrulla.newbieprotection;
 import com.eternalcode.multification.shared.Formatter;
 import dev.piotrulla.newbieprotection.configuration.implementation.NewbieConfiguration;
 import dev.piotrulla.newbieprotection.metrics.NewbieProtectionMetrics;
+import dev.piotrulla.newbieprotection.nametag.NameTagService;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -17,12 +18,14 @@ public class NewbieProtectionController implements Listener {
     private final NewbieProtectionService protectionService;
     private final NewbieConfiguration configuration;
     private final NewbieProtectionMetrics metrics;
+    private final NameTagService nameTagService;
 
-    public NewbieProtectionController(NewbieProtectionMultification multification, NewbieProtectionService protectionService, NewbieConfiguration configuration, NewbieProtectionMetrics metrics) {
+    public NewbieProtectionController(NewbieProtectionMultification multification, NewbieProtectionService protectionService, NewbieConfiguration configuration, NewbieProtectionMetrics metrics, NameTagService nameTagService) {
         this.multification = multification;
         this.protectionService = protectionService;
         this.configuration = configuration;
         this.metrics = metrics;
+        this.nameTagService = nameTagService;
     }
 
     @EventHandler
@@ -36,6 +39,10 @@ public class NewbieProtectionController implements Listener {
         this.protectionService.startProtection(player, this.configuration.protectionTime);
         this.multification.player(player.getUniqueId(), cfg -> cfg.newbieOnJoinMessage);
         this.metrics.addProtectedPlayer();
+
+        if (this.configuration.nameTag.enabled) {
+            this.nameTagService.applyNameTag(player);
+        }
     }
 
     @EventHandler

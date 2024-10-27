@@ -1,6 +1,7 @@
 package dev.piotrulla.newbieprotection;
 
 import dev.piotrulla.newbieprotection.metrics.NewbieProtectionMetrics;
+import dev.piotrulla.newbieprotection.nametag.NameTagService;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
@@ -11,12 +12,14 @@ public class NewbieProtectionTask implements Runnable {
     private final NewbieProtectionService newbieProtectionService;
     private final NewbieProtectionMultification multification;
     private final NewbieProtectionMetrics metrics;
+    private final NameTagService nameTagService;
     private final Server server;
 
-    public NewbieProtectionTask(NewbieProtectionService newbieProtectionService, NewbieProtectionMultification multification, NewbieProtectionMetrics metrics, Server server) {
+    public NewbieProtectionTask(NewbieProtectionService newbieProtectionService, NewbieProtectionMultification multification, NewbieProtectionMetrics metrics, NameTagService nameTagService, Server server) {
         this.newbieProtectionService = newbieProtectionService;
         this.multification = multification;
         this.metrics = metrics;
+        this.nameTagService = nameTagService;
         this.server = server;
     }
 
@@ -35,6 +38,8 @@ public class NewbieProtectionTask implements Runnable {
 
             if (protectionEnd.isBefore(now)) {
                 this.newbieProtectionService.endProtection(player);
+                this.nameTagService.removeNameTag(player);
+
                 this.multification.player(player.getUniqueId(), cfg -> cfg.protectionEnd);
 
                 this.metrics.addTimeOnProtection(newbie.protectionTime());

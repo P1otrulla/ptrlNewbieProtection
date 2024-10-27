@@ -2,6 +2,8 @@ package dev.piotrulla.newbieprotection.configuration.implementation;
 
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.ChatColor;
 import org.checkerframework.checker.units.qual.C;
 
 import java.time.Duration;
@@ -34,7 +36,11 @@ public class NewbieConfiguration extends OkaeriConfig {
         @Comment("# Name tag content")
         public String content = "&e[Newbie] &r";
 
-        enum Type {
+        @Comment
+        @Comment("# Name tag color")
+        public ChatColor color = ChatColor.YELLOW;
+
+        public enum Type {
             PREFIX,
             SUFFIX,
             COLORED_NICK
