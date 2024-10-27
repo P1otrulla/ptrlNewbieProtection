@@ -2,7 +2,6 @@ package dev.piotrulla.newbieprotection;
 
 import com.eternalcode.multification.shared.Formatter;
 import dev.piotrulla.newbieprotection.metrics.NewbieProtectionMetrics;
-import dev.piotrulla.newbieprotection.nametag.NameTagService;
 import dev.piotrulla.newbieprotection.util.DurationUtil;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
@@ -22,19 +21,19 @@ public class NewbieProtectionAdminCommand {
     private final NewbieProtectionService newbieProtectionService;
     private final NewbieProtectionMultification multification;
     private final NewbieProtectionMetrics metrics;
-    private final NameTagService nameTagService;
+    private final NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl;
 
-    public NewbieProtectionAdminCommand(NewbieProtectionService newbieProtectionService, NewbieProtectionMultification multification, NewbieProtectionMetrics metrics, NameTagService nameTagService) {
+    public NewbieProtectionAdminCommand(NewbieProtectionService newbieProtectionService, NewbieProtectionMultification multification, NewbieProtectionMetrics metrics, NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl) {
         this.newbieProtectionService = newbieProtectionService;
         this.multification = multification;
         this.metrics = metrics;
-        this.nameTagService = nameTagService;
+        this.newbieProtectionNameTagServiceImpl = newbieProtectionNameTagServiceImpl;
     }
 
     @Execute(name = "add")
     void add(@Context CommandSender commandSender, @Arg("target") Player target, @Arg("time") Duration time) {
         this.newbieProtectionService.startProtection(target, time);
-        this.nameTagService.applyNameTag(target);
+        this.newbieProtectionNameTagServiceImpl.applyNameTag(target);
 
         Formatter formatter = new Formatter()
                 .register("{PLAYER}", target.getName())
@@ -55,7 +54,7 @@ public class NewbieProtectionAdminCommand {
         });
 
         this.newbieProtectionService.endProtection(target);
-        this.nameTagService.removeNameTag(target);
+        this.newbieProtectionNameTagServiceImpl.removeNameTag(target);
 
         Formatter formatter = new Formatter()
                 .register("{PLAYER}", target.getName());

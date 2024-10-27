@@ -107,9 +107,10 @@ tasks.withType<ShadowJar> {
     val prefix = "dev.piotrulla.newbieprotection.shared"
 
     listOf(
+        "com.eternalcode",
+        "net.megavex",
         "dev.rollczi",
         "eu.okaeri",
-        "com.eternalcode",
         "org.bstats",
         "org.yaml"
     ).forEach { pack ->

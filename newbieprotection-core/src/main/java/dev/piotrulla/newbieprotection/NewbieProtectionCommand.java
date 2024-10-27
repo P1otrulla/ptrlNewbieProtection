@@ -2,7 +2,6 @@ package dev.piotrulla.newbieprotection;
 
 import com.eternalcode.multification.shared.Formatter;
 import dev.piotrulla.newbieprotection.metrics.NewbieProtectionMetrics;
-import dev.piotrulla.newbieprotection.nametag.NameTagService;
 import dev.piotrulla.newbieprotection.util.DurationUtil;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
@@ -18,13 +17,13 @@ public class NewbieProtectionCommand {
     private final NewbieProtectionService newbieProtectionService;
     private final NewbieProtectionMultification multification;
     private final NewbieProtectionMetrics metrics;
-    private final NameTagService nameTagService;
+    private final NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl;
 
-    public NewbieProtectionCommand(NewbieProtectionService newbieProtectionService, NewbieProtectionMultification multification, NewbieProtectionMetrics metrics, NameTagService nameTagService) {
+    public NewbieProtectionCommand(NewbieProtectionService newbieProtectionService, NewbieProtectionMultification multification, NewbieProtectionMetrics metrics, NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl) {
         this.newbieProtectionService = newbieProtectionService;
         this.multification = multification;
         this.metrics = metrics;
-        this.nameTagService = nameTagService;
+        this.newbieProtectionNameTagServiceImpl = newbieProtectionNameTagServiceImpl;
     }
 
     @Execute
@@ -51,7 +50,7 @@ public class NewbieProtectionCommand {
             });
 
             this.newbieProtectionService.endProtection(player);
-            this.nameTagService.removeNameTag(player);
+            this.newbieProtectionNameTagServiceImpl.removeNameTag(player);
 
 
             this.multification.player(player.getUniqueId(), cfg -> cfg.command.protectionRemoved);
