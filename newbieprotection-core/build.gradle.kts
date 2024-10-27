@@ -17,6 +17,7 @@ repositories {
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://storehouse.okaeri.eu/repository/maven-public/")
     maven("https://repo.stellardrift.ca/repository/snapshots/")
+    maven("https://repo.codemc.io/repository/maven-releases/")
     maven("https://repo.eternalcode.pl/snapshots")
     maven("https://repo.eternalcode.pl/releases")
 }
@@ -43,12 +44,20 @@ dependencies {
     implementation("dev.rollczi:litecommands-adventure:$liteCommandsVersion")
 
     // eternalcode stuff
-    implementation("com.eternalcode:eternalcode-commons-adventure:1.1.4-SNAPSHOT")
-    implementation("com.eternalcode:multification-okaeri:1.1.4-SNAPSHOT")
-    implementation("com.eternalcode:multification-bukkit:1.1.4-SNAPSHOT")
+    val eternalcodeVersion = "1.1.4-SNAPSHOT"
+    implementation("com.eternalcode:eternalcode-commons-adventure:$eternalcodeVersion")
+    implementation("com.eternalcode:multification-okaeri:$eternalcodeVersion")
+    implementation("com.eternalcode:multification-bukkit:$eternalcodeVersion")
+
+    // packetevents
+    val scoreboardLibraryVersion = "2.2.0"
+    implementation("net.megavex:scoreboard-library-api:$scoreboardLibraryVersion")
+    runtimeOnly("net.megavex:scoreboard-library-implementation:$scoreboardLibraryVersion")
+    runtimeOnly("net.megavex:scoreboard-library-packetevents:$scoreboardLibraryVersion")
+    compileOnly("com.github.retrooper:packetevents-spigot:2.5.0")
 
     // bStats system
-    implementation("org.bstats:bstats-bukkit:3.0.0")
+    implementation("org.bstats:bstats-bukkit:3.0.2")
 
     // placeholders
     compileOnly("me.clip:placeholderapi:2.11.6")
@@ -75,6 +84,7 @@ bukkit {
     author = "Piotrulla"
     name = "ptrlNewbieProtection"
     version = "${project.version}"
+    softDepend = listOf("PlaceholderAPI", "PacketEvents")
 }
 
 tasks {
@@ -97,10 +107,10 @@ tasks.withType<ShadowJar> {
     val prefix = "dev.piotrulla.newbieprotection.shared"
 
     listOf(
+        "com.eternalcode",
+        "net.megavex",
         "dev.rollczi",
         "eu.okaeri",
-        "com.eternalcode",
-        "net.kyori",
         "org.bstats",
         "org.yaml"
     ).forEach { pack ->

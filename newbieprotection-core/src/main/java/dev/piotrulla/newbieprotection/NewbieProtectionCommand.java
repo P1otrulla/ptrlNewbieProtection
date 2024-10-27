@@ -17,11 +17,13 @@ public class NewbieProtectionCommand {
     private final NewbieProtectionService newbieProtectionService;
     private final NewbieProtectionMultification multification;
     private final NewbieProtectionMetrics metrics;
+    private final NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl;
 
-    public NewbieProtectionCommand(NewbieProtectionService newbieProtectionService, NewbieProtectionMultification multification, NewbieProtectionMetrics metrics) {
+    public NewbieProtectionCommand(NewbieProtectionService newbieProtectionService, NewbieProtectionMultification multification, NewbieProtectionMetrics metrics, NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl) {
         this.newbieProtectionService = newbieProtectionService;
         this.multification = multification;
         this.metrics = metrics;
+        this.newbieProtectionNameTagServiceImpl = newbieProtectionNameTagServiceImpl;
     }
 
     @Execute
@@ -48,6 +50,7 @@ public class NewbieProtectionCommand {
             });
 
             this.newbieProtectionService.endProtection(player);
+            this.newbieProtectionNameTagServiceImpl.removeNameTag(player);
 
 
             this.multification.player(player.getUniqueId(), cfg -> cfg.command.protectionRemoved);
