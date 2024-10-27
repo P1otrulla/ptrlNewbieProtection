@@ -63,23 +63,22 @@ public class NewbieProtectionPlugin extends JavaPlugin {
 
         EventCaller eventCaller = new EventCaller(server);
 
-        NewbieProtectionService newbieProtectionService = new NewbieProtectionServiceImpl(eventCaller);
-        NewbieProtectionAPIProvider.initialize(new NewbieProtectionAPIImpl(newbieProtectionService));
-
         try {
             this.scoreboardLibrary = ScoreboardLibrary.loadScoreboardLibrary(this);
         }
-        catch (NoPacketAdapterAvailableException e) {
+        catch (NoPacketAdapterAvailableException ignored) {
             this.scoreboardLibrary = new NoopScoreboardLibrary();
-            this.getLogger().warning("No scoreboard packet adapter available!");
         }
 
         this.newbieProtectionNameTagServiceImpl = new NewbieProtectionNameTagServiceImpl(configuration, this.scoreboardLibrary, miniMessage);
         this.newbieProtectionNameTagServiceImpl.initialize();
 
+        NewbieProtectionService newbieProtectionService = new NewbieProtectionServiceImpl(eventCaller);
+        NewbieProtectionAPIProvider.initialize(new NewbieProtectionAPIImpl(this.newbieProtectionNameTagServiceImpl, newbieProtectionService));
+
         server.getPluginManager().registerEvents(new NewbieProtectionController(multification, newbieProtectionService, configuration, metricsRepository, newbieProtectionNameTagServiceImpl), this);
 
-        server.getScheduler().runTaskTimer(this, new NewbieProtectionTask(newbieProtectionService, multification, metricsRepository, newbieProtectionNameTagServiceImpl, server), 20L, 20L);
+        server.getScheduler().runTaskTimer(this, new NewbieProtectionTask(newbieProtectionService, multification, metricsRepository, this.newbieProtectionNameTagServiceImpl, server), 20L, 20L);
 
         if (configuration.reminderProtection) {
             long reminderTime = configuration.reminderInterval.toMillis() / 50;
@@ -126,8 +125,8 @@ public class NewbieProtectionPlugin extends JavaPlugin {
                     });
                 })
                 .commands(
-                        new NewbieProtectionAdminCommand(newbieProtectionService, multification, metricsRepository, newbieProtectionNameTagServiceImpl),
-                        new NewbieProtectionCommand(newbieProtectionService, multification, metricsRepository, newbieProtectionNameTagServiceImpl)
+                        new NewbieProtectionAdminCommand(newbieProtectionService, multification, metricsRepository, this.newbieProtectionNameTagServiceImpl),
+                        new NewbieProtectionCommand(newbieProtectionService, multification, metricsRepository, this.newbieProtectionNameTagServiceImpl)
                 )
                 .build();
 
