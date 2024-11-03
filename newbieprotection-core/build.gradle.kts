@@ -84,7 +84,7 @@ bukkit {
     author = "Piotrulla"
     name = "ptrlNewbieProtection"
     version = "${project.version}"
-    softDepend = listOf("PlaceholderAPI", "PacketEvents")
+    softDepend = listOf("PacketEvents")
 }
 
 tasks {
@@ -107,12 +107,14 @@ tasks.withType<ShadowJar> {
     val prefix = "dev.piotrulla.newbieprotection.shared"
 
     listOf(
+        "com.github.retrooper",
         "com.eternalcode",
         "net.megavex",
         "dev.rollczi",
         "eu.okaeri",
         "org.bstats",
-        "org.yaml"
+        "net.kyori",
+        "org.yaml",
     ).forEach { pack ->
         relocate(pack, "$prefix.$pack")
     }
