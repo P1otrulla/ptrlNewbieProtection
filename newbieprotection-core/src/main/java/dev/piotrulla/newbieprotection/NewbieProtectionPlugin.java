@@ -6,18 +6,14 @@ import com.eternalcode.commons.adventure.AdventureUrlPostProcessor;
 import com.eternalcode.multification.shared.Formatter;
 import dev.piotrulla.newbieprotection.bridge.BridgeService;
 import dev.piotrulla.newbieprotection.configuration.ConfigService;
-import dev.piotrulla.newbieprotection.configuration.implementation.CommandConfiguration;
 import dev.piotrulla.newbieprotection.configuration.implementation.MessagesConfiguration;
 import dev.piotrulla.newbieprotection.configuration.implementation.NewbieConfiguration;
-import dev.piotrulla.newbieprotection.configuration.implementation.command.Command;
-import dev.piotrulla.newbieprotection.configuration.implementation.command.SubCommand;
 import dev.piotrulla.newbieprotection.event.EventCaller;
 import dev.piotrulla.newbieprotection.metrics.NewbieProtectionMetricsRepository;
 import dev.piotrulla.newbieprotection.util.DurationUtil;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.adventure.LiteAdventureExtension;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
-import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.schematic.Schematic;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -52,7 +48,6 @@ public class NewbieProtectionPlugin extends JavaPlugin {
 
         NewbieConfiguration configuration = configService.create(NewbieConfiguration.class, new File(this.getDataFolder(), "config.yml"));
         MessagesConfiguration messages = configService.create(MessagesConfiguration.class, new File(this.getDataFolder(), "messages.yml"));
-        CommandConfiguration commandsConfig = configService.create(CommandConfiguration.class, new File(this.getDataFolder(), "commandsConfig.yml"));
         NewbieProtectionMetricsRepository metricsRepository = configService.create(NewbieProtectionMetricsRepository.class, new File(this.getDataFolder(), "data/metrics.dat"));
 
         this.audienceProvider = BukkitAudiences.create(this);
@@ -108,28 +103,6 @@ public class NewbieProtectionPlugin extends JavaPlugin {
                             .register("{PERMISSIONS}", missingPermissions.asJoinedText());
 
                     multification.viewer(invocation.sender(), messagesConfig -> messagesConfig.commands.noPermission, formatter);
-                })
-                .editorGlobal(context -> {
-                    Command command = commandsConfig.commands.get(context.name());
-
-                    if (command == null) {
-                        return context;
-                    }
-
-                    for (String child : command.subCommands().keySet()) {
-                        SubCommand subCommand = command.subCommands().get(child);
-
-                        context = context.editChild(child, editor -> editor.name(subCommand.name())
-                                .aliases(subCommand.aliases())
-                                .applyMeta(meta -> meta.list(Meta.PERMISSIONS, permissions -> permissions.addAll(command.permissions())))
-                                .enabled(subCommand.isEnabled())
-                        );
-                    }
-
-                    return context.name(command.name())
-                            .aliases(command.aliases())
-                            .applyMeta(meta -> meta.list(Meta.PERMISSIONS, permissions -> permissions.addAll(command.permissions())))
-                            .enabled(command.isEnabled());
                 })
                 .invalidUsage((invocation, invalidUsage, resultHandlerChain) -> {
                     CommandSender sender = invocation.sender();

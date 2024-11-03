@@ -16,18 +16,18 @@ import org.bukkit.projectiles.ProjectileSource;
 
 public class NewbieProtectionController implements Listener {
 
-    private final NewbieProtectionNameTagServiceImpl nameTagService;
     private final NewbieProtectionMultification multification;
     private final NewbieProtectionService protectionService;
     private final NewbieConfiguration configuration;
     private final NewbieProtectionMetrics metrics;
+    private final NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl;
 
-    public NewbieProtectionController(NewbieProtectionMultification multification, NewbieProtectionService protectionService, NewbieConfiguration configuration, NewbieProtectionMetrics metrics, NewbieProtectionNameTagServiceImpl nameTagService) {
+    public NewbieProtectionController(NewbieProtectionMultification multification, NewbieProtectionService protectionService, NewbieConfiguration configuration, NewbieProtectionMetrics metrics, NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl) {
         this.multification = multification;
         this.protectionService = protectionService;
         this.configuration = configuration;
         this.metrics = metrics;
-        this.nameTagService = nameTagService;
+        this.newbieProtectionNameTagServiceImpl = newbieProtectionNameTagServiceImpl;
     }
 
     @EventHandler
@@ -43,7 +43,7 @@ public class NewbieProtectionController implements Listener {
         this.metrics.addProtectedPlayer();
 
         if (this.configuration.nameTag.enabled) {
-            Bukkit.getScheduler().runTaskLater(NewbieProtectionPlugin.getProvidingPlugin(NewbieProtectionPlugin.class), () -> this.nameTagService.applyNameTag(player), 40L);
+            Bukkit.getScheduler().runTaskLater(NewbieProtectionPlugin.getProvidingPlugin(NewbieProtectionPlugin.class), () -> this.newbieProtectionNameTagServiceImpl.applyNameTag(player), 40L);
         }
     }
 
@@ -86,7 +86,7 @@ public class NewbieProtectionController implements Listener {
 
             Formatter formatter = new Formatter()
                     .register("{PLAYER}", attacker.getName())
-                    .register("{TIME}", DurationUtil.format(this.protectionService.getRemainingProtectionTime(attacker)));
+                    .register("{TIME}", DurationUtil.format(this.protectionService.getRemainingProtectionTime(victim)));
 
             this.multification.player(attacker.getUniqueId(), cfg -> cfg.cantAttackWhenProtected, formatter);
         }
