@@ -11,7 +11,7 @@ import java.time.Instant;
 public class NewbieProtectionTask implements Runnable {
 
     private final NewbieProtectionService newbieProtectionService;
-    private final NewbieProtectionNameTagServiceImpl nameTagService;
+    private final NewbieProtectionNameTagService nameTagService;
     private final NewbieProtectionDataRepository dataRepository;
     private final NewbieProtectionMultification multification;
     private final NewbieConfiguration configuration;
