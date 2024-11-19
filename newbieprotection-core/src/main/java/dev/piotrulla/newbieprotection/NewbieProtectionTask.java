@@ -9,12 +9,25 @@ import java.time.Instant;
 public class NewbieProtectionTask implements Runnable {
 
     private final NewbieProtectionService newbieProtectionService;
+<<<<<<< Updated upstream
+=======
+    private final NewbieProtectionNameTagService nameTagService;
+    private final NewbieProtectionDataRepository dataRepository;
+>>>>>>> Stashed changes
     private final NewbieProtectionMultification multification;
     private final NewbieProtectionMetrics metrics;
     private final NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl;
     private final Server server;
 
+<<<<<<< Updated upstream
     public NewbieProtectionTask(NewbieProtectionService newbieProtectionService, NewbieProtectionMultification multification, NewbieProtectionMetrics metrics, NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl, Server server) {
+=======
+    public NewbieProtectionTask(
+            NewbieProtectionService newbieProtectionService, NewbieProtectionDataRepository dataRepository,
+            NewbieProtectionMultification multification, NewbieConfiguration configuration,
+            NewbieProtectionMetrics metrics, NewbieProtectionNameTagService nameTagService, Server server
+    ) {
+>>>>>>> Stashed changes
         this.newbieProtectionService = newbieProtectionService;
         this.multification = multification;
         this.metrics = metrics;

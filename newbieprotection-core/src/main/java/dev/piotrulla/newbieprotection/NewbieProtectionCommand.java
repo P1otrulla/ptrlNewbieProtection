@@ -14,12 +14,26 @@ import java.time.Instant;
 @Command(name = "newbieprotection")
 public class NewbieProtectionCommand {
 
+<<<<<<< Updated upstream
+=======
+    private final NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl;
+    private final NewbieProtectionDataRepository newbieDataRepository;
+>>>>>>> Stashed changes
     private final NewbieProtectionService newbieProtectionService;
     private final NewbieProtectionMultification multification;
     private final NewbieProtectionMetrics metrics;
     private final NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl;
 
+<<<<<<< Updated upstream
     public NewbieProtectionCommand(NewbieProtectionService newbieProtectionService, NewbieProtectionMultification multification, NewbieProtectionMetrics metrics, NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl) {
+=======
+    public NewbieProtectionCommand(
+            NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl, NewbieProtectionDataRepository newbieDataRepository,
+            NewbieProtectionService newbieProtectionService, NewbieProtectionMultification multification, NewbieProtectionMetrics metrics
+    ) {
+        this.newbieProtectionNameTagServiceImpl = newbieProtectionNameTagServiceImpl;
+        this.newbieDataRepository = newbieDataRepository;
+>>>>>>> Stashed changes
         this.newbieProtectionService = newbieProtectionService;
         this.multification = multification;
         this.metrics = metrics;
@@ -51,6 +65,7 @@ public class NewbieProtectionCommand {
 
             this.newbieProtectionService.endProtection(player);
             this.newbieProtectionNameTagServiceImpl.removeNameTag(player);
+            this.newbieDataRepository.remove(player.getUniqueId());
 
 
             this.multification.player(player.getUniqueId(), cfg -> cfg.command.protectionRemoved);
