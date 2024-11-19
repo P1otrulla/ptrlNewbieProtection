@@ -54,7 +54,8 @@ dependencies {
     implementation("net.megavex:scoreboard-library-api:$scoreboardLibraryVersion")
     runtimeOnly("net.megavex:scoreboard-library-implementation:$scoreboardLibraryVersion")
     runtimeOnly("net.megavex:scoreboard-library-packetevents:$scoreboardLibraryVersion")
-    compileOnly("com.github.retrooper:packetevents-spigot:2.5.0")
+
+    implementation("com.github.retrooper:packetevents-spigot:2.5.0")
 
     // bStats system
     implementation("org.bstats:bstats-bukkit:3.0.2")
@@ -86,7 +87,6 @@ bukkit {
     name = "ptrlNewbieProtection"
     author = "Piotrulla"
     apiVersion = "1.13"
-    softDepend = listOf("PacketEvents")
 }
 
 tasks {
@@ -109,6 +109,8 @@ tasks.withType<ShadowJar> {
     val prefix = "dev.piotrulla.newbieprotection.shared"
 
     listOf(
+        "com.github.retrooper",
+        "io.github.retrooper",
         "com.eternalcode",
         "dev.rollczi",
         "eu.okaeri",
