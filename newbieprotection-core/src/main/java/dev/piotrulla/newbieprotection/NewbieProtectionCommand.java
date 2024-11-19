@@ -10,20 +10,23 @@ import org.bukkit.entity.Player;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.UUID;
 
 @Command(name = "newbieprotection")
 public class NewbieProtectionCommand {
 
-    private final NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl;
+    private final NewbieProtectionNameTagService newbieProtectionNameTagService;
+    private final NewbieProtectionDataRepository newbieProtectionDataRepository;
     private final NewbieProtectionService newbieProtectionService;
     private final NewbieProtectionMultification multification;
     private final NewbieProtectionMetrics metrics;
 
     public NewbieProtectionCommand(
-            NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl, NewbieProtectionService newbieProtectionService,
-            NewbieProtectionMultification multification, NewbieProtectionMetrics metrics
+            NewbieProtectionNameTagService newbieProtectionNameTagService, NewbieProtectionDataRepository newbieProtectionDataRepository,
+            NewbieProtectionService newbieProtectionService, NewbieProtectionMultification multification, NewbieProtectionMetrics metrics
     ) {
-        this.newbieProtectionNameTagServiceImpl = newbieProtectionNameTagServiceImpl;
+        this.newbieProtectionNameTagService = newbieProtectionNameTagService;
+        this.newbieProtectionDataRepository = newbieProtectionDataRepository;
         this.newbieProtectionService = newbieProtectionService;
         this.multification = multification;
         this.metrics = metrics;
@@ -44,6 +47,8 @@ public class NewbieProtectionCommand {
 
     @Execute(name = "remove")
     void remove(@Context Player player) {
+        UUID uniqueId = player.getUniqueId();
+
         if (this.newbieProtectionService.isProtected(player)) {
             this.newbieProtectionService.getNewbie(player).ifPresent(newbie -> {
                 Instant now = Instant.now();
@@ -53,13 +58,13 @@ public class NewbieProtectionCommand {
             });
 
             this.newbieProtectionService.endProtection(player);
-            this.newbieProtectionNameTagServiceImpl.removeNameTag(player);
+            this.newbieProtectionNameTagService.removeNameTag(player);
+            this.newbieProtectionDataRepository.remove(uniqueId);
 
-
-            this.multification.player(player.getUniqueId(), cfg -> cfg.command.protectionRemoved);
+            this.multification.player(uniqueId, cfg -> cfg.command.protectionRemoved);
             return;
         }
 
-        this.multification.player(player.getUniqueId(), cfg -> cfg.command.notProtected);
+        this.multification.player(uniqueId, cfg -> cfg.command.notProtected);
     }
 }

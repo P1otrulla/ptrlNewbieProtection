@@ -152,8 +152,8 @@ public class NewbieProtectionPlugin extends JavaPlugin {
                     });
                 })
                 .commands(
-                        new NewbieProtectionAdminCommand(this.nameTagService, newbieProtectionService, multification, metricsRepository),
-                        new NewbieProtectionCommand(this.nameTagService, newbieProtectionService, multification, metricsRepository)
+                        new NewbieProtectionAdminCommand(this.nameTagService, dataRepository, newbieProtectionService, multification, metricsRepository),
+                        new NewbieProtectionCommand(this.nameTagService, dataRepository, newbieProtectionService, multification, metricsRepository)
                 )
                 .build();
 

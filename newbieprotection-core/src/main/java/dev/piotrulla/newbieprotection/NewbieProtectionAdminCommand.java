@@ -18,16 +18,18 @@ import java.time.Instant;
 @Permission("ptrlNewbieProtection.admin")
 public class NewbieProtectionAdminCommand {
 
-    private final NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl;
+    private final NewbieProtectionNameTagService newbieProtectionNameTagService;
+    private final NewbieProtectionDataRepository newbieProtectionDataRepository;
     private final NewbieProtectionService newbieProtectionService;
     private final NewbieProtectionMultification multification;
     private final NewbieProtectionMetrics metrics;
 
     public NewbieProtectionAdminCommand(
-            NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl, NewbieProtectionService newbieProtectionService,
+            NewbieProtectionNameTagService newbieProtectionNameTagService, NewbieProtectionDataRepository newbieProtectionDataRepository, NewbieProtectionService newbieProtectionService,
             NewbieProtectionMultification multification, NewbieProtectionMetrics metrics
     ) {
-        this.newbieProtectionNameTagServiceImpl = newbieProtectionNameTagServiceImpl;
+        this.newbieProtectionNameTagService = newbieProtectionNameTagService;
+        this.newbieProtectionDataRepository = newbieProtectionDataRepository;
         this.newbieProtectionService = newbieProtectionService;
         this.multification = multification;
         this.metrics = metrics;
@@ -36,7 +38,7 @@ public class NewbieProtectionAdminCommand {
     @Execute(name = "add")
     void add(@Context CommandSender commandSender, @Arg("target") Player target, @Arg("time") Duration time) {
         this.newbieProtectionService.startProtection(target, time);
-        this.newbieProtectionNameTagServiceImpl.applyNameTag(target);
+        this.newbieProtectionNameTagService.applyNameTag(target);
 
         Formatter formatter = new Formatter()
                 .register("{PLAYER}", target.getName())
@@ -57,7 +59,8 @@ public class NewbieProtectionAdminCommand {
         });
 
         this.newbieProtectionService.endProtection(target);
-        this.newbieProtectionNameTagServiceImpl.removeNameTag(target);
+        this.newbieProtectionNameTagService.removeNameTag(target);
+        this.newbieProtectionDataRepository.remove(target.getUniqueId());
 
         Formatter formatter = new Formatter()
                 .register("{PLAYER}", target.getName());
