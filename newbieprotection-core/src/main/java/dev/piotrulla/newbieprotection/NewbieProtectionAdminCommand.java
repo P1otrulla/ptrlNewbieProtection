@@ -18,16 +18,19 @@ import java.time.Instant;
 @Permission("ptrlNewbieProtection.admin")
 public class NewbieProtectionAdminCommand {
 
+    private final NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl;
     private final NewbieProtectionService newbieProtectionService;
     private final NewbieProtectionMultification multification;
     private final NewbieProtectionMetrics metrics;
-    private final NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl;
 
-    public NewbieProtectionAdminCommand(NewbieProtectionService newbieProtectionService, NewbieProtectionMultification multification, NewbieProtectionMetrics metrics, NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl) {
+    public NewbieProtectionAdminCommand(
+            NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl, NewbieProtectionService newbieProtectionService,
+            NewbieProtectionMultification multification, NewbieProtectionMetrics metrics
+    ) {
+        this.newbieProtectionNameTagServiceImpl = newbieProtectionNameTagServiceImpl;
         this.newbieProtectionService = newbieProtectionService;
         this.multification = multification;
         this.metrics = metrics;
-        this.newbieProtectionNameTagServiceImpl = newbieProtectionNameTagServiceImpl;
     }
 
     @Execute(name = "add")

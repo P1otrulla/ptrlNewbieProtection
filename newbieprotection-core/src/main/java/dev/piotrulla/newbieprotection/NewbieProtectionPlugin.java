@@ -4,7 +4,6 @@ import com.eternalcode.commons.adventure.AdventureLegacyColorPostProcessor;
 import com.eternalcode.commons.adventure.AdventureLegacyColorPreProcessor;
 import com.eternalcode.commons.adventure.AdventureUrlPostProcessor;
 import com.eternalcode.multification.shared.Formatter;
-import dev.piotrulla.newbieprotection.bridge.BridgeService;
 import dev.piotrulla.newbieprotection.configuration.ConfigService;
 import dev.piotrulla.newbieprotection.configuration.implementation.CommandConfiguration;
 import dev.piotrulla.newbieprotection.configuration.implementation.MessagesConfiguration;
@@ -39,21 +38,19 @@ public class NewbieProtectionPlugin extends JavaPlugin {
     private AudienceProvider audienceProvider;
     private ScoreboardLibrary scoreboardLibrary;
 
-    private NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl;
+    private NewbieProtectionNameTagServiceImpl nameTagService;
 
     private LiteCommands<CommandSender> liteCommands;
 
     @Override
     public void onEnable() {
-        BridgeService bridgeService = new BridgeService(this.getDescription(), this.getServer().getPluginManager());
-        bridgeService.initialize();
-
         ConfigService configService = new ConfigService();
 
         NewbieConfiguration configuration = configService.create(NewbieConfiguration.class, new File(this.getDataFolder(), "config.yml"));
         MessagesConfiguration messages = configService.create(MessagesConfiguration.class, new File(this.getDataFolder(), "messages.yml"));
         CommandConfiguration commandsConfig = configService.create(CommandConfiguration.class, new File(this.getDataFolder(), "commandsConfig.yml"));
         NewbieProtectionMetricsRepository metricsRepository = configService.create(NewbieProtectionMetricsRepository.class, new File(this.getDataFolder(), "data/metrics.dat"));
+        NewbieProtectionDataInMemory dataRepository = configService.create(NewbieProtectionDataInMemory.class, new File(this.getDataFolder(), "data/protected.dat"));
 
         this.audienceProvider = BukkitAudiences.create(this);
         MiniMessage miniMessage = MiniMessage.builder()
@@ -68,22 +65,25 @@ public class NewbieProtectionPlugin extends JavaPlugin {
 
         EventCaller eventCaller = new EventCaller(server);
 
-        try {
-            this.scoreboardLibrary = ScoreboardLibrary.loadScoreboardLibrary(this);
+        if (configuration.nameTag.enabled) {
+            try {
+                this.scoreboardLibrary = ScoreboardLibrary.loadScoreboardLibrary(this);
+                System.out.println("Scoreboard library loaded");
+            }
+            catch (NoPacketAdapterAvailableException ignored) {
+                this.scoreboardLibrary = new NoopScoreboardLibrary();
+            }
         }
-        catch (NoPacketAdapterAvailableException ignored) {
-            this.scoreboardLibrary = new NoopScoreboardLibrary();
-        }
 
-        this.newbieProtectionNameTagServiceImpl = new NewbieProtectionNameTagServiceImpl(configuration, this.scoreboardLibrary, miniMessage);
-        this.newbieProtectionNameTagServiceImpl.initialize();
+        this.nameTagService = new NewbieProtectionNameTagServiceImpl(configuration, this.scoreboardLibrary, miniMessage, server, this.getLogger());
+        this.nameTagService.initialize();
 
-        NewbieProtectionService newbieProtectionService = new NewbieProtectionServiceImpl(eventCaller);
-        NewbieProtectionAPIProvider.initialize(new NewbieProtectionAPIImpl(this.newbieProtectionNameTagServiceImpl, newbieProtectionService));
+        NewbieProtectionService newbieProtectionService = new NewbieProtectionServiceImpl(configuration, eventCaller);
+        NewbieProtectionAPIProvider.initialize(new NewbieProtectionAPIImpl(this.nameTagService, newbieProtectionService));
 
-        server.getPluginManager().registerEvents(new NewbieProtectionController(multification, newbieProtectionService, configuration, metricsRepository, newbieProtectionNameTagServiceImpl), this);
+        server.getPluginManager().registerEvents(new NewbieProtectionController(multification, newbieProtectionService, configuration, metricsRepository, this.nameTagService, dataRepository), this);
 
-        server.getScheduler().runTaskTimer(this, new NewbieProtectionTask(newbieProtectionService, multification, metricsRepository, this.newbieProtectionNameTagServiceImpl, server), 20L, 20L);
+        server.getScheduler().runTaskTimer(this, new NewbieProtectionTask(newbieProtectionService, dataRepository, multification, configuration, metricsRepository, this.nameTagService, server), 20L, 20L);
 
         if (configuration.reminderProtection) {
             long reminderTime = configuration.reminderInterval.toMillis() / 50;
@@ -152,8 +152,8 @@ public class NewbieProtectionPlugin extends JavaPlugin {
                     });
                 })
                 .commands(
-                        new NewbieProtectionAdminCommand(newbieProtectionService, multification, metricsRepository, this.newbieProtectionNameTagServiceImpl),
-                        new NewbieProtectionCommand(newbieProtectionService, multification, metricsRepository, this.newbieProtectionNameTagServiceImpl)
+                        new NewbieProtectionAdminCommand(this.nameTagService, newbieProtectionService, multification, metricsRepository),
+                        new NewbieProtectionCommand(this.nameTagService, newbieProtectionService, multification, metricsRepository)
                 )
                 .build();
 
@@ -164,6 +164,6 @@ public class NewbieProtectionPlugin extends JavaPlugin {
         this.scoreboardLibrary.close();
         this.audienceProvider.close();
         this.liteCommands.unregister();
-        this.newbieProtectionNameTagServiceImpl.shutdown();
+        this.nameTagService.shutdown();
     }
 }

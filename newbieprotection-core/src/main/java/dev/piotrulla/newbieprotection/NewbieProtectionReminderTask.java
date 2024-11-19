@@ -11,7 +11,10 @@ public class NewbieProtectionReminderTask implements Runnable {
     private final NewbieProtectionMultification multification;
     private final Server server;
 
-    public NewbieProtectionReminderTask(NewbieProtectionService newbieProtectionService, NewbieProtectionMultification multification, Server server) {
+    public NewbieProtectionReminderTask(
+            NewbieProtectionService newbieProtectionService,
+            NewbieProtectionMultification multification, Server server
+    ) {
         this.newbieProtectionService = newbieProtectionService;
         this.multification = multification;
         this.server = server;

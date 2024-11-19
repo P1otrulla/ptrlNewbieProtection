@@ -14,16 +14,19 @@ import java.time.Instant;
 @Command(name = "newbieprotection")
 public class NewbieProtectionCommand {
 
+    private final NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl;
     private final NewbieProtectionService newbieProtectionService;
     private final NewbieProtectionMultification multification;
     private final NewbieProtectionMetrics metrics;
-    private final NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl;
 
-    public NewbieProtectionCommand(NewbieProtectionService newbieProtectionService, NewbieProtectionMultification multification, NewbieProtectionMetrics metrics, NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl) {
+    public NewbieProtectionCommand(
+            NewbieProtectionNameTagServiceImpl newbieProtectionNameTagServiceImpl, NewbieProtectionService newbieProtectionService,
+            NewbieProtectionMultification multification, NewbieProtectionMetrics metrics
+    ) {
+        this.newbieProtectionNameTagServiceImpl = newbieProtectionNameTagServiceImpl;
         this.newbieProtectionService = newbieProtectionService;
         this.multification = multification;
         this.metrics = metrics;
-        this.newbieProtectionNameTagServiceImpl = newbieProtectionNameTagServiceImpl;
     }
 
     @Execute

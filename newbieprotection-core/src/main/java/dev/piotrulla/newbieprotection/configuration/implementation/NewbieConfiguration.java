@@ -1,5 +1,6 @@
 package dev.piotrulla.newbieprotection.configuration.implementation;
 
+import dev.piotrulla.newbieprotection.NewbieProtectionTime;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 
@@ -9,6 +10,16 @@ public class NewbieConfiguration extends OkaeriConfig {
 
     @Comment("# Protection time for newbies")
     public Duration protectionTime = Duration.ofMinutes(3);
+
+    @Comment({
+            "# Protection time type",
+            "# REAL_TIME - protection time will be counted in real time",
+            "# GAME_TIME - protection time will be counted only when player is online"
+    })
+    public NewbieProtectionTime protectionTimeType = NewbieProtectionTime.REAL_TIME;
+
+    @Comment("# If true, protection time will be saved in data storage")
+    public boolean saveToMemory = true;
 
     @Comment
     @Comment("# If true, player will recive protection messages")
