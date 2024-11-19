@@ -8,6 +8,8 @@ public interface NewbieProtectionDataRepository {
 
     void save(Newbie newbie);
 
+    void remove(UUID uniqueId);
+
     void remove(Newbie newbie);
 
     void update(Newbie newbie);

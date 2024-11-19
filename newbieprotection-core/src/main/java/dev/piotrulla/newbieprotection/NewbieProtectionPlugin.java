@@ -79,7 +79,7 @@ public class NewbieProtectionPlugin extends JavaPlugin {
         this.nameTagService.initialize();
 
         NewbieProtectionService newbieProtectionService = new NewbieProtectionServiceImpl(configuration, eventCaller);
-        NewbieProtectionAPIProvider.initialize(new NewbieProtectionAPIImpl(this.nameTagService, newbieProtectionService));
+        NewbieProtectionAPIProvider.initialize(new NewbieProtectionAPIImpl(this.nameTagService, dataRepository, newbieProtectionService));
 
         server.getPluginManager().registerEvents(new NewbieProtectionController(multification, newbieProtectionService, configuration, metricsRepository, this.nameTagService, dataRepository), this);
 

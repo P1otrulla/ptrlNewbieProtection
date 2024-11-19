@@ -24,9 +24,14 @@ public class NewbieProtectionDataInMemory extends OkaeriConfig implements Newbie
     }
 
     @Override
-    public void remove(Newbie newbie) {
-        this.entries.removeIf(entry -> entry.uniqueId().equals(newbie.uniqueId()));
+    public void remove(UUID uniqueId) {
+        this.entries.removeIf(entry -> entry.uniqueId().equals(uniqueId));
         this.save();
+    }
+
+    @Override
+    public void remove(Newbie newbie) {
+        this.remove(newbie.uniqueId());
     }
 
     @Override
