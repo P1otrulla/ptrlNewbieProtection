@@ -4,6 +4,7 @@ import com.eternalcode.commons.adventure.AdventureLegacyColorPostProcessor;
 import com.eternalcode.commons.adventure.AdventureLegacyColorPreProcessor;
 import com.eternalcode.commons.adventure.AdventureUrlPostProcessor;
 import com.eternalcode.multification.shared.Formatter;
+import com.github.retrooper.packetevents.PacketEvents;
 import dev.piotrulla.newbieprotection.configuration.ConfigService;
 import dev.piotrulla.newbieprotection.configuration.implementation.CommandConfiguration;
 import dev.piotrulla.newbieprotection.configuration.implementation.MessagesConfiguration;
@@ -18,6 +19,7 @@ import dev.rollczi.litecommands.adventure.LiteAdventureExtension;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.schematic.Schematic;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -41,6 +43,15 @@ public class NewbieProtectionPlugin extends JavaPlugin {
     private NewbieProtectionNameTagServiceImpl nameTagService;
 
     private LiteCommands<CommandSender> liteCommands;
+
+    @Override
+    public void onLoad() {
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+        PacketEvents.getAPI().getSettings().reEncodeByDefault(false)
+                .checkForUpdates(false)
+                .bStats(false);
+        PacketEvents.getAPI().load();
+    }
 
     @Override
     public void onEnable() {
@@ -161,6 +172,7 @@ public class NewbieProtectionPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        PacketEvents.getAPI().terminate();
         this.scoreboardLibrary.close();
         this.audienceProvider.close();
         this.liteCommands.unregister();
