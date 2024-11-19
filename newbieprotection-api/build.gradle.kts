@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "dev.piotrulla.newbieprotection"
-version = "1.0.0"
+version = "1.0.2"
 
 repositories {
     mavenCentral()
@@ -46,7 +46,7 @@ publishing {
 
             credentials {
                 username = "admin"
-                password = "5k3Ss9txOjs3MH8ElyDOLYjgxNc3SxVzxDS+FzZL5YZ0Gpw1f3DZJm2vzPm7r2Dj"
+                password = "skibidi_sigma"
             }
         }
     }
