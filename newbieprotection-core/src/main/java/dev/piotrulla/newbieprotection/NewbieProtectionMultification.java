@@ -18,7 +18,10 @@ public class NewbieProtectionMultification extends BukkitMultification<MessagesC
     private final MessagesConfiguration messagesCfg;
     private final MiniMessage miniMessage;
 
-    public NewbieProtectionMultification(AudienceProvider audienceProvider, MessagesConfiguration messagesCfg, MiniMessage miniMessage) {
+    public NewbieProtectionMultification(
+            AudienceProvider audienceProvider, MessagesConfiguration messagesCfg,
+            MiniMessage miniMessage
+    ) {
         this.audienceProvider = audienceProvider;
         this.messagesCfg = messagesCfg;
         this.miniMessage = miniMessage;

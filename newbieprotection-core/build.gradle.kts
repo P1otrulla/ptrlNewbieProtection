@@ -7,7 +7,7 @@ plugins {
     id("xyz.jpenilla.run-paper") version "2.3.1"
 }
 
-group = "dev.piotrulla.hypemc.signgui"
+group = "dev.piotrulla.newbieprotection"
 version = "1.0.0"
 
 repositories {
@@ -50,7 +50,7 @@ dependencies {
     implementation("com.eternalcode:multification-bukkit:$eternalcodeVersion")
 
     // packetevents
-    val scoreboardLibraryVersion = "2.2.0"
+    val scoreboardLibraryVersion = "2.2.1"
     implementation("net.megavex:scoreboard-library-api:$scoreboardLibraryVersion")
     runtimeOnly("net.megavex:scoreboard-library-implementation:$scoreboardLibraryVersion")
     runtimeOnly("net.megavex:scoreboard-library-packetevents:$scoreboardLibraryVersion")
@@ -79,11 +79,13 @@ tasks.withType<JavaCompile> {
 
 bukkit {
     main = "dev.piotrulla.newbieprotection.NewbieProtectionPlugin"
-    apiVersion = "1.13"
+    website = "https://github.com/P1otrulla/ptrlNewbieProtection"
+    description = "Secure your newbie!"
     prefix = "ptrlNewbieProtection"
-    author = "Piotrulla"
-    name = "ptrlNewbieProtection"
     version = "${project.version}"
+    name = "ptrlNewbieProtection"
+    author = "Piotrulla"
+    apiVersion = "1.13"
     softDepend = listOf("PacketEvents")
 }
 
@@ -94,7 +96,7 @@ tasks {
 }
 
 tasks.withType<ShadowJar> {
-    archiveFileName.set("ptrlNewbieProtection -${project.version}.jar")
+    archiveFileName.set("ptrlNewbieProtection - ${project.version}.jar")
 
     exclude(
         "org/intellij/lang/annotations/**",
@@ -107,13 +109,10 @@ tasks.withType<ShadowJar> {
     val prefix = "dev.piotrulla.newbieprotection.shared"
 
     listOf(
-        "com.github.retrooper",
         "com.eternalcode",
-        "net.megavex",
         "dev.rollczi",
         "eu.okaeri",
         "org.bstats",
-        "net.kyori",
         "org.yaml",
     ).forEach { pack ->
         relocate(pack, "$prefix.$pack")

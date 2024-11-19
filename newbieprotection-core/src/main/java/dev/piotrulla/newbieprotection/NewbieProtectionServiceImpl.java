@@ -1,5 +1,6 @@
 package dev.piotrulla.newbieprotection;
 
+import dev.piotrulla.newbieprotection.configuration.implementation.NewbieConfiguration;
 import dev.piotrulla.newbieprotection.event.EventCaller;
 import dev.piotrulla.newbieprotection.event.NewbieProtectionEndEvent;
 import dev.piotrulla.newbieprotection.event.NewbieProtectionStartEvent;
@@ -17,9 +18,11 @@ import java.util.UUID;
 public class NewbieProtectionServiceImpl implements NewbieProtectionService {
 
     private final Map<UUID, NewbieProtectionUser> newbies = new HashMap<>();
+    private final NewbieConfiguration configuration;
     private final EventCaller eventCaller;
 
-    public NewbieProtectionServiceImpl(EventCaller eventCaller) {
+    public NewbieProtectionServiceImpl(NewbieConfiguration configuration, EventCaller eventCaller) {
+        this.configuration = configuration;
         this.eventCaller = eventCaller;
     }
 
@@ -76,16 +79,21 @@ public class NewbieProtectionServiceImpl implements NewbieProtectionService {
 
         NewbieProtectionUser newbie = this.newbies.get(player.getUniqueId());
 
-        Instant protectionEnd = newbie.issuedAt().plus(newbie.protectionTime());
-        Instant now = Instant.now();
+        if (this.configuration.protectionTimeType == NewbieProtectionTime.REAL_TIME) {
 
-        Duration between = Duration.between(now, protectionEnd);
+            Instant protectionEnd = newbie.issuedAt().plus(newbie.protectionTime());
+            Instant now = Instant.now();
 
-        if (between.isNegative() || between.isZero()) {
-            return Duration.ZERO;
+            Duration between = Duration.between(now, protectionEnd);
+
+            if (between.isNegative() || between.isZero()) {
+                return Duration.ZERO;
+            }
+
+            return between;
         }
 
-        return between;
+        return newbie.protectionTime();
     }
 
     @Override

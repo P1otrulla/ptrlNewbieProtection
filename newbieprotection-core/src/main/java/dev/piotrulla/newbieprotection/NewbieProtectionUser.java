@@ -15,6 +15,12 @@ public class NewbieProtectionUser implements Newbie {
         this.uniqueId = uniqueId;
     }
 
+    public NewbieProtectionUser(UUID uniqueId, Instant issuedAt, Duration protectionTime) {
+        this.uniqueId = uniqueId;
+        this.issuedAt = issuedAt;
+        this.protectionTime = protectionTime;
+    }
+
     @Override
     public UUID uniqueId() {
         return this.uniqueId;

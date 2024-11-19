@@ -4,7 +4,6 @@ import com.eternalcode.multification.shared.Formatter;
 import dev.piotrulla.newbieprotection.configuration.implementation.NewbieConfiguration;
 import dev.piotrulla.newbieprotection.metrics.NewbieProtectionMetrics;
 import dev.piotrulla.newbieprotection.util.DurationUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -14,20 +13,58 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
+import java.time.Duration;
+import java.time.Instant;
+
 public class NewbieProtectionController implements Listener {
 
     private final NewbieProtectionNameTagServiceImpl nameTagService;
+    private final NewbieProtectionDataRepository dataRepository;
     private final NewbieProtectionMultification multification;
     private final NewbieProtectionService protectionService;
     private final NewbieConfiguration configuration;
     private final NewbieProtectionMetrics metrics;
 
-    public NewbieProtectionController(NewbieProtectionMultification multification, NewbieProtectionService protectionService, NewbieConfiguration configuration, NewbieProtectionMetrics metrics, NewbieProtectionNameTagServiceImpl nameTagService) {
+    public NewbieProtectionController(NewbieProtectionMultification multification, NewbieProtectionService protectionService, NewbieConfiguration configuration, NewbieProtectionMetrics metrics, NewbieProtectionNameTagServiceImpl nameTagService, NewbieProtectionDataRepository dataRepository) {
         this.multification = multification;
         this.protectionService = protectionService;
         this.configuration = configuration;
         this.metrics = metrics;
         this.nameTagService = nameTagService;
+        this.dataRepository = dataRepository;
+    }
+
+    @EventHandler
+    public void onNameTag(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+
+        if (!this.dataRepository.isExists(player.getUniqueId())) {
+            return;
+        }
+
+        Newbie load = this.dataRepository.load(player.getUniqueId());
+
+        if (load == null && this.configuration.protectionTimeType == NewbieProtectionTime.REAL_TIME) {
+            return;
+        }
+
+        if (this.configuration.protectionTimeType == NewbieProtectionTime.REAL_TIME) {
+            Instant loadedAt = load.issuedAt();
+            Instant end = loadedAt.plus(this.configuration.protectionTime);
+
+            if (end.isBefore(Instant.now())) {
+                return;
+            }
+
+            this.protectionService.startProtection(player, Duration.between(Instant.now(), end));
+        }
+        else {
+            this.protectionService.startProtection(player, load.protectionTime());
+        }
+
+        if (this.configuration.nameTag.enabled) {
+            this.nameTagService.applyNameTag(player);
+        }
     }
 
     @EventHandler
@@ -43,7 +80,7 @@ public class NewbieProtectionController implements Listener {
         this.metrics.addProtectedPlayer();
 
         if (this.configuration.nameTag.enabled) {
-            Bukkit.getScheduler().runTaskLater(NewbieProtectionPlugin.getProvidingPlugin(NewbieProtectionPlugin.class), () -> this.nameTagService.applyNameTag(player), 40L);
+            this.nameTagService.applyNameTag(player);
         }
     }
 
