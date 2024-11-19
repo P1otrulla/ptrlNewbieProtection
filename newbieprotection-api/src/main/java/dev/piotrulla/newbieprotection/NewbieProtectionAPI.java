@@ -6,4 +6,6 @@ public interface NewbieProtectionAPI {
 
     NewbieProtectionNameTagService getNewbieProtectionNameTagService();
 
+    NewbieProtectionDataRepository getNewbieProtectionDataRepository();
+
 }
