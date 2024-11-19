@@ -68,7 +68,7 @@ public class NewbieProtectionPlugin extends JavaPlugin {
         if (configuration.nameTag.enabled) {
             try {
                 this.scoreboardLibrary = ScoreboardLibrary.loadScoreboardLibrary(this);
-                System.out.println("Scoreboard library loaded");
+                this.getLogger().info("Scoreboard library loaded");
             }
             catch (NoPacketAdapterAvailableException ignored) {
                 this.scoreboardLibrary = new NoopScoreboardLibrary();
