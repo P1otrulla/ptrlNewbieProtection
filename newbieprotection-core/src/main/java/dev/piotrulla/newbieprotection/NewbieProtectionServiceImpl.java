@@ -10,14 +10,14 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class NewbieProtectionServiceImpl implements NewbieProtectionService {
 
-    private final Map<UUID, NewbieProtectionUser> newbies = new HashMap<>();
+    private final Map<UUID, NewbieProtectionUser> newbies = new ConcurrentHashMap<>();
     private final NewbieConfiguration configuration;
     private final EventCaller eventCaller;
 
